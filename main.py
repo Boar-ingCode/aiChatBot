@@ -10,6 +10,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import Dataset, TensorDataset
 
+nltk.download('punkt')  
+nltk.download('wordnet')
 class ChatBotManual(nn.Module):
 
     def __init__(self, input_size, output_size):
@@ -28,3 +30,32 @@ class ChatBotManual(nn.Module):
         x = self.dropout(x)
         x = self.fc3(x)
         return x
+    
+
+class ChatBotAssistent:
+
+    def __init__(self, intent_path, fucntion_mappings = None):
+        self.Model = None
+        self.intent_path = intent_path
+
+        self.documents = []
+        self.vocabulary = []
+        self.intents = []
+        self.intents_responses = []
+
+        self.fucntion_mappings = fucntion_mappings
+
+        self.X = None
+        self.y = None
+
+    @staticmethod
+    def tokenize_and_lemanize(sentence):
+        lemmatizer = nltk.stem.WordNetLemmatizer()
+
+        words = nltk.word_tokenize(sentence)
+        words = [lemmatizer.lemmatize(word.lower()) for word in words]
+        return words
+
+
+chatbot = ChatBotAssistent("intents.json")
+print(chatbot.tokenize_and_lemanize("Hello, how are you?"))
